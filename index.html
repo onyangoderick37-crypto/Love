@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>For My Love - Lilian Nduku 💖</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(circle at top left, #ffb6c1, #ff1493, #8b008b);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      font-family: "Poppins", sans-serif;
+    }
+
+    .start-screen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+
+    .start-screen h2 {
+      font-size: 2em;
+      margin-bottom: 20px;
+    }
+
+    .start-screen button {
+      background: #ff1493;
+      color: white;
+      border: none;
+      padding: 15px 35px;
+      border-radius: 50px;
+      font-size: 1.2em;
+      cursor: pointer;
+      box-shadow: 0 0 15px #ff69b4;
+      transition: all 0.3s ease;
+    }
+
+    .start-screen button:hover {
+      background: #ff69b4;
+      transform: scale(1.1);
+    }
+
+    h1 {
+      color: white;
+      font-size: 3em;
+      position: absolute;
+      top: 40%;
+      text-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 10px #fff, 0 0 20px #ff69b4; }
+      to { text-shadow: 0 0 30px #fff, 0 0 60px #ff1493; }
+    }
+
+    .heart {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      transform: rotate(45deg);
+      animation: floatUp 5s linear infinite;
+    }
+
+    .heart::before,
+    .heart::after {
+      content: '';
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      background: red;
+      border-radius: 50%;
+    }
+
+    .heart::before {
+      top: -10px;
+      left: 0;
+    }
+
+    .heart::after {
+      left: -10px;
+      top: 0;
+    }
+
+    @keyframes floatUp {
+      0% {
+        opacity: 1;
+        transform: translateY(0) rotate(45deg);
+      }
+      100% {
+        opacity: 0;
+        transform: translateY(-800px) rotate(45deg);
+      }
+    }
+
+    .message {
+      position: absolute;
+      bottom: 100px;
+      font-size: 2em;
+      color: #fff;
+      text-align: center;
+      animation: glow 2s ease-in-out infinite alternate;
+    }
+
+    audio {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Start Screen -->
+  <div class="start-screen" id="start-screen">
+    <h2>💝 A Special Surprise Awaits 💝</h2>
+    <button id="start-btn">Open Gift</button>
+  </div>
+
+  <h1 id="title"></h1>
+  <div class="message" id="message"></div>
+
+  <!-- Background Music -->
+  <audio id="bg-music" loop>
+    <source src="mm.dat" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const title = document.getElementById("title");
+    const message = document.getElementById("message");
+    const music = document.getElementById("bg-music");
+    const startScreen = document.getElementById("start-screen");
+    const startBtn = document.getElementById("start-btn");
+
+    const nameText = "Lilian Nduku 💖";
+    const messageText = "💞 Infinity 💞";
+    let nameIndex = 0;
+    let msgIndex = 0;
+    let typingForwardName = true;
+    let typingForwardMsg = true;
+
+    // Typewriter for both texts
+    function loopText(element, text, forwardFlag, index, speed, delay, callback) {
+      if (forwardFlag) {
+        if (index < text.length) {
+          element.innerHTML += text.charAt(index);
+          index++;
+          setTimeout(() => loopText(element, text, forwardFlag, index, speed, delay, callback), speed);
+        } else {
+          forwardFlag = false;
+          setTimeout(() => loopText(element, text, forwardFlag, index, speed, delay, callback), delay);
+        }
+      } else {
+        if (index > 0) {
+          element.innerHTML = text.substring(0, index - 1);
+          index--;
+          setTimeout(() => loopText(element, text, forwardFlag, index, speed, delay, callback), 80);
+        } else {
+          forwardFlag = true;
+          callback(); // restart hearts and sync loops
+          setTimeout(() => loopText(element, text, forwardFlag, index, speed, delay, callback), delay);
+        }
+      }
+    }
+
+    // Hearts function
+    function createHearts() {
+      const colors = ["#ff1493", "#ff69b4", "#ffb6c1", "#ff6ec7", "#ff4d88", "#ffc0cb"];
+      for (let i = 0; i < 25; i++) {
+        const heart = document.createElement("div");
+        heart.classList.add("heart");
+        heart.style.left = Math.random() * window.innerWidth + "px";
+        heart.style.background = colors[Math.floor(Math.random() * colors.length)];
+        heart.style.animationDuration = 3 + Math.random() * 3 + "s";
+        heart.style.transform = "scale(" + (0.5 + Math.random()) + ") rotate(45deg)";
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 6000);
+      }
+    }
+
+    // Start everything after she clicks
+    startBtn.addEventListener("click", () => {
+      startScreen.style.display = "none";
+      music.play();
+
+      // Loop both texts together
+      loopText(title, nameText, typingForwardName, nameIndex, 150, 1500, createHearts);
+      loopText(message, messageText, typingForwardMsg, msgIndex, 100, 1500, createHearts);
+
+      // Start background hearts continuously
+      setInterval(createHearts, 1000);
+    });
+  </script>
+</body>
+</html>
